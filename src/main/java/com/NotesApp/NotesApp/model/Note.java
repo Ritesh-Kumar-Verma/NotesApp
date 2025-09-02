@@ -16,10 +16,13 @@ public class Note {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    private Integer userId;
+
     private String username;
 
     private String title;
 
+    @Column(columnDefinition = "TEXT")
     private String content;
 
 //    private String createdAt;
