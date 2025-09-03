@@ -2,17 +2,16 @@ package com.NotesApp.NotesApp.controller;
 
 
 import com.NotesApp.NotesApp.model.Note;
+import com.NotesApp.NotesApp.model.SharedNotes;
 import com.NotesApp.NotesApp.model.UsersLoginDetails;
 import com.NotesApp.NotesApp.model.Wrapper;
 import com.NotesApp.NotesApp.service.NoteService;
 import com.NotesApp.NotesApp.service.UserLoginService;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -102,7 +101,25 @@ public class LoginController {
     }
 
 
+    @PostMapping("/makenoteshareable/{id}")
+    public ResponseEntity<?> makeNoteShareable(@PathVariable int id, @RequestBody UsersLoginDetails usersLoginDetails){
+        Optional<UsersLoginDetails> user = userLoginService.verifyUser(usersLoginDetails);
+        if(user.isPresent()){
+            SharedNotes sharedNotes = noteService.makeNoteSharable(id);
+            return new ResponseEntity<>(sharedNotes,HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Unauthorized",HttpStatus.UNAUTHORIZED);
+    }
 
+
+    @GetMapping("/getsharednote/{id}")
+    public ResponseEntity<?> getSharedNote(@PathVariable int id){
+        Optional<SharedNotes> sharedNotes = noteService.getSharedNote(id);
+        if(sharedNotes.isPresent()){
+            return new ResponseEntity<>(sharedNotes,HttpStatus.OK);
+        }
+        return new ResponseEntity<>(Optional.empty() , HttpStatus.NOT_FOUND);
+    }
 
 
 

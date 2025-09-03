@@ -1,8 +1,10 @@
 package com.NotesApp.NotesApp.service;
 
 import com.NotesApp.NotesApp.model.Note;
+import com.NotesApp.NotesApp.model.SharedNotes;
 import com.NotesApp.NotesApp.model.UsersLoginDetails;
 import com.NotesApp.NotesApp.repo.NoteRepo;
+import com.NotesApp.NotesApp.repo.SharedNotesRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,9 @@ public class NoteService {
 
     @Autowired
     NoteRepo noteRepo;
+
+    @Autowired
+    SharedNotesRepo sharedNotesRepo;
 
 
     public Note addNotes(Note note) {
@@ -43,6 +48,28 @@ public class NoteService {
     public List<Note> getNotes(Integer id) {
         Optional<List<Note>> list = noteRepo.findByUserId(id);
         return list.get();
+
+    }
+
+    public SharedNotes makeNoteSharable(int id) {
+
+        Optional<Note> note = noteRepo.findById(id);
+
+        Optional<SharedNotes> sharedNotes = sharedNotesRepo.findBySharedByAndTitle(note.get().getUsername(),note.get().getTitle());
+        if(sharedNotes.isPresent()){
+            return sharedNotes.get();
+        }
+        SharedNotes sharedNotesNew = new SharedNotes();
+        sharedNotesNew.setContent(note.get().getContent());
+        sharedNotesNew.setTitle(note.get().getTitle());
+        sharedNotesNew.setSharedBy(note.get().getUsername());
+
+        return sharedNotesRepo.save(sharedNotesNew);
+    }
+
+
+    public Optional<SharedNotes> getSharedNote(int id) {
+        return sharedNotesRepo.findById(id);
 
     }
 }
