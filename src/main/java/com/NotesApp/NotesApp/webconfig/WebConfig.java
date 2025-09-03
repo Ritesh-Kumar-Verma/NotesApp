@@ -13,7 +13,7 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // all endpoints
-                        .allowedOrigins("https://Ritesh-Kumar-Verma.github.io","http://localhost:5173")
+                        .allowedOrigins("https://notes-app-woad-psi.vercel.app/","http://localhost:5173")
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowCredentials(true);
             }
